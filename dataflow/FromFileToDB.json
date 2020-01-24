@@ -9,7 +9,7 @@
 						"referenceName": "newCitiesFile",
 						"type": "DatasetReference"
 					},
-					"name": "take data from file"
+					"name": "TakeDataFromFile"
 				}
 			],
 			"sinks": [
@@ -18,15 +18,15 @@
 						"referenceName": "AzureSqlTable1",
 						"type": "DatasetReference"
 					},
-					"name": "load to DB"
+					"name": "LoadToDB"
 				}
 			],
 			"transformations": [
 				{
-					"name": "remove semicolon"
+					"name": "removeSemicolon"
 				}
 			],
-			"script": "source(output(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> take data from file\ntake data from file derive(Column_2 = replace(Column_2,';','')) ~> remove semicolon\nremove semicolon sink(input(\n\t\tCityID as integer,\n\t\tCityName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> load to DB"
+			"script": "source(output(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> TakeDataFromFile\nTakeDataFromFile derive(Column_2 = replace(Column_2,';','')) ~> removeSemicolon\nremoveSemicolon sink(input(\n\t\tCityID as integer,\n\t\tCityName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> LoadToDB"
 		}
 	}
 }
