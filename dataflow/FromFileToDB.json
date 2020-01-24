@@ -1,5 +1,5 @@
 {
-	"name": "dataflow2",
+	"name": "FromFileToDB",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -9,7 +9,7 @@
 						"referenceName": "newCitiesFile",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "take data from file"
 				}
 			],
 			"sinks": [
@@ -18,15 +18,15 @@
 						"referenceName": "AzureSqlTable1",
 						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "load to DB"
 				}
 			],
 			"transformations": [
 				{
-					"name": "DerivedColumn1"
+					"name": "remove semicolon"
 				}
 			],
-			"script": "source(output(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> source1\nsource1 derive(Column_2 = replace(Column_2,';','')) ~> DerivedColumn1\nDerivedColumn1 sink(input(\n\t\tCityID as integer,\n\t\tCityName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+			"script": "source(output(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> take data from file\ntake data from file derive(Column_2 = replace(Column_2,';','')) ~> remove semicolon\nremove semicolon sink(input(\n\t\tCityID as integer,\n\t\tCityName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> load to DB"
 		}
 	}
 }
