@@ -26,7 +26,7 @@
 					"name": "removeSemicolon"
 				}
 			],
-			"script": "source(output(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> TakeDataFromFile\nTakeDataFromFile derive(Column_2 = replace(Column_2,';','')) ~> removeSemicolon\nremoveSemicolon sink(input(\n\t\tCityID as integer,\n\t\tCityName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> LoadToDB"
+			"script": "source(output(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> TakeDataFromFile\nTakeDataFromFile derive(Column_2 = replace(Column_2,';','')) ~> removeSemicolon\nremoveSemicolon sink(input(\n\t\tCityID as integer,\n\t\tCityName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tmapColumn(\n\t\tCityID = Column_1,\n\t\tCityName = Column_2\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> LoadToDB"
 		}
 	}
 }
