@@ -67,9 +67,16 @@
 				]
 			},
 			{
-				"name": "dataflow1",
-				"type": "ExecuteDataFlow",
-				"dependsOn": [],
+				"name": "deleteRowAdjustData",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Copy data1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -79,14 +86,11 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"dataflow": {
-						"referenceName": "removeRowsFromTb",
-						"type": "DataFlowReference"
-					},
-					"compute": {
-						"coreCount": 8,
-						"computeType": "General"
-					}
+					"storedProcedureName": "[dbo].[deleteTMandQuotes]"
+				},
+				"linkedServiceName": {
+					"referenceName": "LogDatabase",
+					"type": "LinkedServiceReference"
 				}
 			}
 		],
