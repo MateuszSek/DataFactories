@@ -13,8 +13,15 @@
 				}
 			],
 			"sinks": [],
-			"transformations": [],
-			"script": "source(output(\n\t\tCityID as integer,\n\t\tCityName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> valCityTable"
+			"transformations": [
+				{
+					"name": "takeWrongData"
+				},
+				{
+					"name": "NewCityName"
+				}
+			],
+			"script": "source(output(\n\t\tCityID as integer,\n\t\tCityName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> valCityTable\nvalCityTable lookup(left(CityName,1) == ' ',\n\tbroadcast: 'none')~> takeWrongData\ntakeWrongData derive(CityName = ltrim(CityName,' ')) ~> NewCityName"
 		}
 	}
 }
