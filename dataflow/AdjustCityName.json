@@ -1,5 +1,5 @@
 {
-	"name": "removeRowsFromTb",
+	"name": "AdjustCityName",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
