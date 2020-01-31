@@ -12,16 +12,24 @@
 					"name": "valCityTable"
 				}
 			],
-			"sinks": [],
-			"transformations": [
+			"sinks": [
 				{
-					"name": "takeWrongData"
-				},
-				{
-					"name": "NewCityName"
+					"dataset": {
+						"referenceName": "AzureSqlTable1",
+						"type": "DatasetReference"
+					},
+					"name": "ReloadValCity"
 				}
 			],
-			"script": "source(output(\n\t\tCityID as integer,\n\t\tCityName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> valCityTable\nvalCityTable lookup(left(CityName,1) == ' ',\n\tbroadcast: 'none')~> takeWrongData\ntakeWrongData derive(CityName = ltrim(CityName,' ')) ~> NewCityName"
+			"transformations": [
+				{
+					"name": "NewCityName"
+				},
+				{
+					"name": "LetUpdate"
+				}
+			],
+			"script": "source(output(\n\t\tCityID as integer,\n\t\tCityName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> valCityTable\nvalCityTable derive(CityName = ltrim(CityName,' ')) ~> NewCityName\nNewCityName alterRow(updateIf(CityID>0)) ~> LetUpdate\nLetUpdate sink(input(\n\t\tCityID as integer,\n\t\tCityName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['CityID'],\n\tformat: 'table',\n\tmapColumn(\n\t\tCityID,\n\t\tCityName\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> ReloadValCity"
 		}
 	}
 }
