@@ -1,0 +1,51 @@
+{
+	"name": "Load tag data",
+	"properties": {
+		"activities": [
+			{
+				"name": "Truncate Stage Table",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[uspTruncateStageTable]"
+				},
+				"linkedServiceName": {
+					"referenceName": "LogDatabase",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Stage Actor Data",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Truncate Stage Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"enableStaging": false
+				}
+			}
+		],
+		"annotations": []
+	}
+}
